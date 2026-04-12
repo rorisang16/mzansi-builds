@@ -1,0 +1,1 @@
+export const dbName = process.env.dbName || "mzansi_builds";
