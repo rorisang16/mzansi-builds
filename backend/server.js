@@ -17,19 +17,17 @@ app.use(express.static(path.join(__dirname, "public")))
 app.use(cors()) //manages  controls web security by allowing cross-origin requests from specified origins
 app.use(express.json()) //parses incoming JSON requests and makes the data available in req.body
 
-
-
-// starts the server
-const port = process.env.PORT || 5000;
-
 // Test route
 app.get('/', (req, res) => {
   res.send('MzansiBuilds API is running');
 });
 
 
+// starts the server
+const port = process.env.PORT || 5000;
 
 //ensures readiness to receive incoming requests
 app.listen(port, () => {
     console.log(`Server is listening on ${port}`);
 });
+
