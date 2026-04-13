@@ -1,5 +1,5 @@
 
-import CustomError from "../utils/customErrors";
+import CustomError from "../utils/customErrors.js";
 
 //express error middleware(4 parameters tells express that this handles errors)
 export const errorHandler = (err, req, res, next) => {
