@@ -22,6 +22,7 @@ try
   process.exit(1); // Exits the process with an error code
 }
 
+//event listeners for connection errors
 //  code for handling pool errors gracefully
 pool.on('error', (err) => {
   console.error(' Unexpected error on idle connection:', err.message);
