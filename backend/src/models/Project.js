@@ -6,11 +6,13 @@ class Project {
     this.title = title;
     this.description = description;
     this.stage = stage;          // 'ideation', 'development', 'testing'
-    this.status = status || 'active';  // 'active', 'completed'
+    this.status = status || 'active';  // 'active', 'completed' new projects start activ
     this.userId = userId;
     this.createdAt = new Date();
     this.updatedAt = new Date();
   }
+
+  //helper methods for business logic
 
   // Checks if project is completed for celebration wall feature
   isCompleted() {
