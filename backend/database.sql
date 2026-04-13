@@ -1,8 +1,8 @@
---Creates database
+-- Creates database
 CREATE DATABASE IF NOT EXISTS mzansi_builds;
 USE mzansi_builds;
 
---users table
+-- users table
 CREATE TABLE users (
   id INT PRIMARY KEY AUTO_INCREMENT,
   name VARCHAR(100) NOT NULL,
@@ -11,7 +11,7 @@ CREATE TABLE users (
   createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
---projects table
+-- projects table
 CREATE TABLE projects (
   id INT PRIMARY KEY AUTO_INCREMENT,
   title VARCHAR(100) NOT NULL,
@@ -24,7 +24,7 @@ CREATE TABLE projects (
   FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE
 );
 
---comments table
+-- comments table
 CREATE TABLE comments (
   id INT PRIMARY KEY AUTO_INCREMENT,
   content TEXT NOT NULL,
@@ -35,8 +35,7 @@ CREATE TABLE comments (
   FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE
 );
 
---Milestones table
-
+-- milestones table
 CREATE TABLE milestones (
   id INT PRIMARY KEY AUTO_INCREMENT,
   title VARCHAR(100) NOT NULL,
