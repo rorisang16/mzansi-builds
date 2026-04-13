@@ -1,11 +1,11 @@
 import Joi from 'joi';
 
 export const registerSchema = Joi.object({
-  username: Joi.string().pattern(/^[a-zA-Z0-9_-]+$/).min(3).max(30).required().messages({
+  username: Joi.string().trim().pattern(/^[a-zA-Z0-9_-]+$/).min(3).max(30).required().messages({
     "string.pattern.base": "Username can only contain letters, numbers, underscores and hyphens",
     "string.min": "Username must be at least 3 characters",}),
 
-  email: Joi.string().email().required(),
+  email: Joi.string().trim().email().required(),
   password: Joi.string().min(8).max(128).pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/).required()
   .messages({
     "string.min": "Password must be at least 8 characters",
@@ -16,6 +16,6 @@ export const registerSchema = Joi.object({
 
 
 export const loginSchema = Joi.object({
-  email: Joi.string().email().required(),
+  email: Joi.string().trim().email().required(),
   password: Joi.string().required(),
 }).options({ stripUnknown: true });
