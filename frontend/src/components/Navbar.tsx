@@ -8,19 +8,20 @@ const Navbar = () => {
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const isLoggedIn = localStorage.getItem("mzansi_user");
+  const isLoggedIn = localStorage.getItem("user");
   const isAuthPage = location.pathname === "/login" || location.pathname === "/register";
 
   if (isAuthPage) return null;
 
   const links = [
     { to: "/dashboard", label: "Feed" },
-    { to: "/create", label: "New Project" },
+    { to: "/projects/create", label: "New Project" },
     { to: "/celebration", label: "Celebration Wall" },
   ];
 
   const handleLogout = () => {
-    localStorage.removeItem("mzansi_user");
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
     navigate("/login");
   };
 

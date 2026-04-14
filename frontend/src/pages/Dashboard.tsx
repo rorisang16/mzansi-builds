@@ -4,12 +4,12 @@ import { apiFetch } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Plus, MessageCircle, Rocket, Award } from "lucide-react";
+import { Plus, MessageCircle, Rocket, Award, ArrowRight } from "lucide-react";
 
-const stageBadge: Record<string, string> = {
-  ideation: "bg-accent text-accent-foreground",
-  development: "bg-primary/20 text-primary",
-  testing: "bg-celebration/20 text-foreground",
+const stageBadge: Record<string, { cls: string; label: string }> = {
+  ideation:    { cls: "bg-amber-500/15 text-amber-400 border-amber-500/20",  label: "Ideation" },
+  development: { cls: "bg-primary/15 text-primary border-primary/20",         label: "Development" },
+  testing:     { cls: "bg-blue-500/15 text-blue-400 border-blue-500/20",       label: "Testing" },
 };
 
 type Project = {
@@ -26,6 +26,7 @@ type Project = {
 const Dashboard = () => {
   const [projects, setProjects] = useState<Project[]>([]);
   const navigate = useNavigate();
+  const user = JSON.parse(localStorage.getItem("user") || "null");
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -37,65 +38,85 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <section className="bg-hero py-16 px-4">
+      {/* Hero */}
+      <section className="bg-hero border-b border-border/20 py-14 px-4">
         <div className="container mx-auto max-w-4xl">
-          <div className="flex items-center gap-3 mb-4 animate-fade-in">
-            <Rocket className="h-8 w-8 text-hero-accent" />
-            <h1 className="text-3xl md:text-4xl font-bold text-hero-foreground">
-              Build in Public,{" "}
-              <span className="text-hero-accent">Together.</span>
-            </h1>
-          </div>
-          <p className="text-hero-foreground/70 text-lg max-w-2xl mb-6 animate-fade-in" style={{ animationDelay: "0.1s" }}>
-            See what developers across Mzansi are building. Share your progress, get feedback, and celebrate wins.
+          <p className="text-sm font-medium text-primary mb-2 animate-fade-in">
+            {user ? `Welcome back, ${user.username}` : "Welcome"}
           </p>
-          <Button variant="hero" size="lg" onClick={() => navigate("/projects/create")} className="animate-fade-in" style={{ animationDelay: "0.2s" }}>
-            <Plus className="h-5 w-5 mr-2" /> Start a Project
+          <h1 className="text-3xl md:text-5xl font-bold text-hero-foreground mb-3 animate-fade-in leading-tight">
+            Build in Public,{" "}
+            <span className="text-hero-accent">Together.</span>
+          </h1>
+          <p className="text-hero-foreground/60 text-base md:text-lg max-w-xl mb-7 animate-fade-in" style={{ animationDelay: "0.1s" }}>
+            See what developers across Mzansi are building. Share progress, get feedback, celebrate wins.
+          </p>
+          <Button variant="hero" size="lg" onClick={() => navigate("/projects/create")} className="animate-fade-in gap-2" style={{ animationDelay: "0.2s" }}>
+            <Plus className="h-4 w-4" /> New Project
           </Button>
         </div>
       </section>
 
       <section className="container mx-auto max-w-4xl py-10 px-4">
-        <h2 className="text-xl font-semibold mb-6">Live Feed</h2>
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-lg font-semibold">
+            Live Feed
+            {projects.length > 0 && (
+              <span className="ml-2 text-sm font-normal text-muted-foreground">{projects.length} project{projects.length !== 1 ? "s" : ""}</span>
+            )}
+          </h2>
+        </div>
 
         {projects.length === 0 ? (
-          <div className="text-center py-20">
-            <Rocket className="h-16 w-16 text-muted-foreground/30 mx-auto mb-4" />
-            <p className="text-muted-foreground text-lg">No projects yet. Be the first to build!</p>
-            <Button variant="hero" className="mt-4" onClick={() => navigate("/projects/create")}>
-              Create Project
+          <div className="text-center py-24 animate-fade-in">
+            <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-secondary mb-5">
+              <Rocket className="h-10 w-10 text-muted-foreground/40" />
+            </div>
+            <p className="text-muted-foreground text-lg font-medium">No projects yet.</p>
+            <p className="text-muted-foreground/60 text-sm mt-1 mb-5">Be the first to build in public.</p>
+            <Button variant="hero" onClick={() => navigate("/projects/create")}>
+              <Plus className="h-4 w-4 mr-1" /> Create Project
             </Button>
           </div>
         ) : (
-          <div className="space-y-4">
-            {projects.map((project, i) => (
-              <Link to={`/projects/${project.id}`} key={project.id}>
-                <Card className="glass-card hover:shadow-xl transition-all duration-300 cursor-pointer animate-slide-up" style={{ animationDelay: `${i * 0.05}s` }}>
-                  <CardHeader className="pb-2">
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <CardTitle className="text-lg">{project.title}</CardTitle>
-                        <p className="text-sm text-muted-foreground mt-1">by {project.username}</p>
+          <div className="space-y-3">
+            {projects.map((project, i) => {
+              const stage = stageBadge[project.stage];
+              return (
+                <Link to={`/projects/${project.id}`} key={project.id}>
+                  <Card
+                    className="glass-card group hover:border-primary/30 hover:shadow-primary/5 hover:shadow-lg transition-all duration-200 cursor-pointer animate-slide-up"
+                    style={{ animationDelay: `${i * 0.04}s` }}
+                  >
+                    <CardContent className="p-4">
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 flex-wrap mb-1">
+                            <CardTitle className="text-base group-hover:text-primary transition-colors">{project.title}</CardTitle>
+                            {stage && (
+                              <Badge className={`${stage.cls} border text-xs font-medium`}>{stage.label}</Badge>
+                            )}
+                          </div>
+                          <p className="text-xs text-muted-foreground mb-2">by <span className="font-medium text-foreground/70">{project.username}</span></p>
+                          <p className="text-sm text-muted-foreground line-clamp-2">{project.description}</p>
+                        </div>
+                        <ArrowRight className="h-4 w-4 text-muted-foreground/30 group-hover:text-primary group-hover:translate-x-0.5 transition-all mt-1 flex-shrink-0" />
                       </div>
-                      <Badge className={stageBadge[project.stage] || "bg-secondary text-secondary-foreground"}>{project.stage}</Badge>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-sm text-muted-foreground line-clamp-2 mb-3">{project.description}</p>
-                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                      <span className="flex items-center gap-1">
-                        <MessageCircle className="h-4 w-4" /> {project.comment_count ?? 0}
-                      </span>
-                      {project.milestone_count && project.milestone_count > 0 && (
-                        <span className="text-primary font-medium flex items-center gap-1">
-                          <Award className="h-4 w-4" /> {project.milestone_count} milestone{project.milestone_count > 1 ? "s" : ""}
+                      <div className="flex items-center gap-4 text-xs text-muted-foreground mt-3 pt-3 border-t border-border/50">
+                        <span className="flex items-center gap-1">
+                          <MessageCircle className="h-3.5 w-3.5" /> {project.comment_count ?? 0} comment{project.comment_count !== 1 ? "s" : ""}
                         </span>
-                      )}
-                    </div>
-                  </CardContent>
-                </Card>
-              </Link>
-            ))}
+                        {project.milestone_count != null && project.milestone_count > 0 && (
+                          <span className="flex items-center gap-1 text-primary font-medium">
+                            <Award className="h-3.5 w-3.5" /> {project.milestone_count} milestone{project.milestone_count > 1 ? "s" : ""}
+                          </span>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
+              );
+            })}
           </div>
         )}
       </section>

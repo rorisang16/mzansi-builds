@@ -5,13 +5,14 @@ import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import ProjectDetails from "./pages/ProjectDetails";
 import CreateProject from "./pages/CreateProject";
+import CelebrationWall from "./pages/CelebrationWall";
 import NotFound from "./pages/NotFound";
 
 function App() {
   return (
     <BrowserRouter>
       <Navbar />
-      <main className="flex-1 p-4">
+      <main className="flex-1">
           <Routes>
             <Route path="/" element={<Navigate to="/dashboard" />} />
             <Route path="/login" element={<Login />} />
@@ -19,6 +20,7 @@ function App() {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/projects/:id" element={<ProjectDetails />} />
             <Route path="/projects/create" element={<CreateProject />} />
+            <Route path="/celebration" element={<CelebrationWall />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
       </main>
