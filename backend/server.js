@@ -4,6 +4,8 @@ import cors from 'cors';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv'
+import authRoutes from './src/routes/authRoutes.js';
+
 
 //importing of modules
 import pool from './src/config/database.js';
@@ -15,7 +17,7 @@ import { errorHandler, notFoundHandler } from './src/middleware/errorHandler.js'
 const app = express();
 
 //Middleware function to serve static files, handles client side assets like css + javascript 
-
+app.use('/api/auth', authRoutes);
 app.use(cors()) //manages  controls web security by allowing cross-origin requests from specified origins
 app.use(express.json()) //parses incoming JSON requests and makes the data available in req.body
 
