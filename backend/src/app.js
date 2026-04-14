@@ -6,9 +6,9 @@ import projectRoutes from './routes/projectRoutes.js';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler.js';
 
 const app = express();
+app.use(cors());
 app.use(express.json());
 app.use('/api/auth', authRoutes)
-app.use(cors());
 
 
 app.get('/', (req, res) => {

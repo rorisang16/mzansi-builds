@@ -3,39 +3,31 @@ import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Rocket } from "lucide-react";
-import { addUser, setCurrentUser, getUsers } from "@/lib/store";
+import { apiFetch } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 
 const Register = () => {
-  const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
-  const [bio, setBio] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  const handleRegister = (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    const users = getUsers();
-    if (users.find((u) => u.email === email)) {
-      toast({ title: "Error", description: "An account with this email already exists.", variant: "destructive" });
-      return;
+    const data = await apiFetch("/auth/register", {
+      method: "POST",
+      body: JSON.stringify({ username, email, password, confirmPassword }),
+    });
+    if (data.success) {
+      toast({ title: "Welcome!", description: "Your account has been created." });
+      navigate("/login");
+    } else {
+      toast({ title: "Error", description: data.message || "Registration failed.", variant: "destructive" });
     }
-
-    const newUser = {
-      id: crypto.randomUUID(),
-      name,
-      email,
-      bio,
-      avatar: `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(name)}`,
-    };
-    addUser(newUser);
-    setCurrentUser(newUser);
-    toast({ title: "Welcome!", description: "Your account has been created." });
-    navigate("/dashboard");
   };
 
   return (
@@ -56,20 +48,20 @@ const Register = () => {
           <CardContent>
             <form onSubmit={handleRegister} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="name">Full Name</Label>
-                <Input id="name" placeholder="Your name" value={name} onChange={(e) => setName(e.target.value)} required />
+                <Label htmlFor="username">Username</Label>
+                <Input id="username" placeholder="yourname" value={username} onChange={(e) => setUsername(e.target.value)} required />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
                 <Input id="email" type="email" placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} required />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="bio">Bio</Label>
-                <Textarea id="bio" placeholder="Tell us about yourself..." value={bio} onChange={(e) => setBio(e.target.value)} />
-              </div>
-              <div className="space-y-2">
                 <Label htmlFor="password">Password</Label>
                 <Input id="password" type="password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} required />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="confirmPassword">Confirm Password</Label>
+                <Input id="confirmPassword" type="password" placeholder="••••••••" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required />
               </div>
               <Button type="submit" variant="hero" className="w-full" size="lg">
                 Create Account

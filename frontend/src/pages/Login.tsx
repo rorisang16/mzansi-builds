@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Rocket } from "lucide-react";
-import { getUsers, setCurrentUser } from "@/lib/store";
+import { apiFetch } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 
 const Login = () => {
@@ -14,15 +14,18 @@ const Login = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    const users = getUsers();
-    const user = users.find((u) => u.email === email);
-    if (user) {
-      setCurrentUser(user);
+    const data = await apiFetch("/auth/login", {
+      method: "POST",
+      body: JSON.stringify({ email, password }),
+    });
+    if (data.success) {
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.data));
       navigate("/dashboard");
     } else {
-      toast({ title: "Login failed", description: "No account found with that email. Please register first.", variant: "destructive" });
+      toast({ title: "Login failed", description: data.message || "Invalid credentials.", variant: "destructive" });
     }
   };
 
