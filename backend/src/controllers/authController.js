@@ -93,20 +93,45 @@ res.status(200).json({
         next(error);
     }   
 }
-}
-
-//locks out after multiple login attempts to avoid brute force attacks
-const attempt = loginAttempts.get(email);
-    if (attempt && attempt.count >= MAX_LOGIN_ATTEMPTS) {
-      const timeSinceFirst = Date.now() - attempt.firstAttempt;
-      if (timeSinceFirst < LOCKOUT_DURATION) {
-        const minutes = Math.ceil((LOCKOUT_DURATION - timeSinceFirst) / 60000);
-        throw new UnauthorizedError(`Account locked. Try again in ${minutes} minutes.`);
-      } else {
-        // Lockout expired, reset counter
-        loginAttempts.delete(email);
-      }
+    async login(req, res, next) {
+        try {
+            const { email, password } = req.validatedData;
+            const attempt = loginAttempts.get(email);
+            if (attempt && attempt.count >= MAX_LOGIN_ATTEMPTS) {
+                const timeSinceFirst = Date.now() - attempt.firstAttempt;
+                if (timeSinceFirst < LOCKOUT_DURATION) {
+                    const minutes = Math.ceil((LOCKOUT_DURATION - timeSinceFirst) / 60000);
+                    throw new UnauthorizedError(`Account locked. Try again in ${minutes} minutes.`);
+                } else {
+                    loginAttempts.delete(email);
+                }
+            }
+            const user = await userRepository.getByEmail(email);
+            if (!user) {
+                let att = loginAttempts.get(email);
+                if (!att) { att = { count: 1, firstAttempt: Date.now() }; } else { att.count += 1; }
+                loginAttempts.set(email, att);
+                throw new UnauthorizedError('Invalid email or password');
+            }
+            const valid = await bcrypt.compare(password, user.password);
+            if (!valid) {
+                let att = loginAttempts.get(email);
+                if (!att) { att = { count: 1, firstAttempt: Date.now() }; } else { att.count += 1; }
+                loginAttempts.set(email, att);
+                throw new UnauthorizedError('Invalid email or password');
+            }
+            loginAttempts.delete(email);
+            const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
+            res.status(200).json({
+                success: true,
+                message: "Login successful",
+                data: { id: user.id, username: user.username, email: user.email },
+                token,
+            });
+        } catch (error) {
+            next(error);
+        }
     }
-
+}
 
 export default new AuthController();
