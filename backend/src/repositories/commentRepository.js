@@ -1,14 +1,13 @@
-import pool from '../config/database.js' assert { type: 'json' };
+import pool from '../config/database.js' ;
 import { DatabaseError } from '../utils/customErrors.js';
-import type { Pool } from 'mysql2/promise';
 
-// Repository pattern (Node.js Design Patterns) - abstracts data access logic
-// separates business logic from database operations, making controllers independent of the data layer
+
+
 class CommentRepository {
 
-  // Inserts a new comment into the database
-  // Parameterised queries prevent SQL injection (OWASP security best practice)
-  // Time complexity: O(log n) for B-tree index insert on primary key (CLRS Ch.18)
+  //Inserts a new comment into the database
+  //Parameterised queries prevent SQL injection (OWASP security best practice)
+  //Time complexity: O(log n) for B-tree index insert on primary key
   async create(content, projectId, userId) {
     const query = `
       INSERT INTO comments (content, projectId, userId, createdAt)
@@ -19,7 +18,7 @@ class CommentRepository {
       const [result] = await pool.execute(query, [content, projectId, userId]);
 
       return {
-        id: result.insertId, // auto-generated primary key
+        id: result.insertId, //auto-generated primary key
         content,
         projectId,
         userId,
@@ -29,20 +28,22 @@ class CommentRepository {
     }
   }
 
-  // Retrieves all comments for a given project with the commenter's username
-  // JOIN operation - O(n log m) where n = comments, m = users (CLRS Ch.18 - indexed nested loop join)
-  // Results ordered by createdAt DESC for newest-first display in the UI
+//Retrieves all comments for a given project with the commenter's username
+  
+  //Results ordered by createdAt DESC for newest-first display in the UI
   async getByProjectId(projectId) {
     const query = `
       SELECT c.*, u.username 
       FROM comments c 
       JOIN users u ON c.userId = u.id 
       WHERE c.projectId = ? 
-      ORDER BY c.createdAt DESC
+      ORDER BY c.createdAt DESC 
     `;
+    //ordered by created at for newest first display
+   // JOIN operation, O(nlogm) where n = comments, m = users (CLRS Ch.18 - indexed nested loop join)
 
     try {
-      // rows = array of matching records, could be empty if no comments exist
+      // array of matching records, could be empty if no comments exist
       const [rows] = await pool.execute(query, [projectId]);
       return rows;
     } catch (error) {
@@ -50,28 +51,28 @@ class CommentRepository {
     }
   }
 
-  // Fetches a single comment by its primary key
-  // O(log n) lookup using B-tree index on primary key (CLRS Ch.18)
+  //fetches a single comment by its primary key + O(log n) lookup using B-tree index on primary key 
+  
   async getById(commentId) {
     const query = 'SELECT * FROM comments WHERE id = ?';
 
     try {
       const [rows] = await pool.execute(query, [commentId]);
-      // returns first match or null - O(1) array access
+      //returns first match or null : O(1) array access
       return rows.length > 0 ? rows[0] : null;
     } catch (error) {
       throw new DatabaseError("Failed to fetch comment");
     }
   }
 
-  // Removes a comment by its primary key
-  // O(log n) B-tree index lookup + delete (CLRS Ch.18)
+  //removes a comment by its primary key
+  //O(log n) B-tree index lookup + delete 
   async delete(commentId) {
     const query = 'DELETE FROM comments WHERE id = ?';
 
     try {
       const [result] = await pool.execute(query, [commentId]);
-      // returns true if a row was deleted, false if not found
+      //returns true if a row was deleted, false if no matching commentId was found
       return result.affectedRows > 0;
     } catch (error) {
       throw new DatabaseError("Failed to delete comment");
@@ -79,6 +80,11 @@ class CommentRepository {
   }
 }
 
-// Singleton pattern (Node.js Design Patterns) - O(1) space
-// one shared instance instead of creating duplicates per request
+
+
+
+
+
+
+
 export default new CommentRepository();
