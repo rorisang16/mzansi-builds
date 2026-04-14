@@ -132,6 +132,10 @@ npm run dev
 
 App available at http://localhost:5173
 
+Please register and then log in thereafter
+
+
+
 5. Running tests
 
 cd backend
