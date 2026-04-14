@@ -19,3 +19,11 @@ export const loginSchema = Joi.object({
   email: Joi.string().trim().email().required(),
   password: Joi.string().required(),
 }).options({ stripUnknown: true });
+
+//change password schema
+
+export const changePasswordSchema = Joi.object({
+  currentPassword: Joi.string().required(),
+  newPassword: Joi.string().min(8).max(128).pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/).required(),
+  confirmPassword: Joi.string().valid(Joi.ref('newPassword')).required(),
+}).options({ stripUnknown: true });
