@@ -15,6 +15,10 @@ app.get('/', (req, res) => {
   res.send("MzansiBuilds API is running");
 });
 
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
 app.use('/api/projects', projectRoutes);
 app.use('/api/projects', commentRoutes);
 app.use(notFoundHandler);

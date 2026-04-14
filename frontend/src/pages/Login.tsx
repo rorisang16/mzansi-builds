@@ -24,8 +24,12 @@ const Login = () => {
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.data));
       navigate("/dashboard");
+    } else if (data.status === 401 || data.message?.toLowerCase().includes("invalid") || data.message?.toLowerCase().includes("password") || data.message?.toLowerCase().includes("credentials")) {
+      toast({ title: "Incorrect email or password", description: "Double-check your details and try again.", variant: "destructive" });
+    } else if (data.message?.toLowerCase().includes("not found") || data.message?.toLowerCase().includes("user")) {
+      toast({ title: "Account not found", description: "No account exists with that email. Try registering first.", variant: "destructive" });
     } else {
-      toast({ title: "Login failed", description: data.message || "Invalid credentials.", variant: "destructive" });
+      toast({ title: "Something went wrong", description: "We couldn't sign you in right now. Please try again.", variant: "destructive" });
     }
   };
 
@@ -64,12 +68,7 @@ const Login = () => {
                 Register
               </Link>
             </p>
-            <p className="text-center text-xs text-muted-foreground mt-2">
-              Issues? Contact{" "}
-              <a href="mailto:yolisa@geekulcha.dev" className="text-primary hover:underline">
-                yolisa@geekulcha.dev
-              </a>
-            </p>
+
           </CardContent>
         </Card>
       </div>

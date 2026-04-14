@@ -18,15 +18,25 @@ const Register = () => {
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (password !== confirmPassword) {
+      toast({ title: "Passwords don't match", description: "Make sure both password fields are identical.", variant: "destructive" });
+      return;
+    }
+    if (password.length < 6) {
+      toast({ title: "Password too short", description: "Use at least 6 characters for your password.", variant: "destructive" });
+      return;
+    }
     const data = await apiFetch("/auth/register", {
       method: "POST",
       body: JSON.stringify({ username, email, password, confirmPassword }),
     });
     if (data.success) {
-      toast({ title: "Welcome!", description: "Your account has been created." });
+      toast({ title: "Account created!", description: "Welcome to MzansiBuilds. Please sign in." });
       navigate("/login");
+    } else if (data.message?.toLowerCase().includes("exists") || data.message?.toLowerCase().includes("taken") || data.message?.toLowerCase().includes("duplicate")) {
+      toast({ title: "Account already exists", description: "That email or username is already registered. Try signing in instead.", variant: "destructive" });
     } else {
-      toast({ title: "Error", description: data.message || "Registration failed.", variant: "destructive" });
+      toast({ title: "Registration failed", description: data.message || "Something went wrong. Please try again.", variant: "destructive" });
     }
   };
 
