@@ -9,12 +9,12 @@ import { registerSchema, loginSchema, changePasswordSchema } from '../middleware
 const router = express.Router();
 
 //registration endpoint
-router.post('/register', validate(registerSchema), authController.register);
+router.post('/register', validate('register'), authController.register);
 
 //login endpoint
-router.post('/login', validate(loginSchema), authController.login);
+router.post('/login', validate('login'), authController.login);
 
 //change password endpoint (protected)
-router.post('/change-password', authenticate, validate(changePasswordSchema), authController.changePassword);
+router.post('/change-password', authenticate, validate('changePassword'), authController.changePassword);
 
 export default router;

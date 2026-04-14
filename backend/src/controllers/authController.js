@@ -41,9 +41,9 @@ if(existing) {
     const token = jwt.sign({userId: user.id}, JWT_SECRET,{expiresIn: JWT_EXPIRES_IN});
 
 //success message + user data
-    res.status(200).json({
-        success:true, 
-        message: "Login successful",
+    res.status(201).json({
+        success: true, 
+        message: "User registered successfully",
         data: {id: user.id, username: user.username, email: user.email},
         token,
     });

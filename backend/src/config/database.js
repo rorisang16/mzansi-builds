@@ -1,7 +1,9 @@
 import mysql from "mysql2/promise"; // use of mysql 2 promise in order to ensure secure async queries
 import dotenv from "dotenv";
 
-dotenv.config(); // Loads environment variables from .env file
+// Load .env.test for tests, .env otherwise
+const envFile = process.env.NODE_ENV === 'test' ? '.env.test' : '.env';
+dotenv.config({ path: envFile });
 
 let pool;
 // conection pool to manage multiple connections to the database
@@ -25,15 +27,15 @@ try
 //event listeners for connection errors
 //  code for handling pool errors gracefully
 pool.on('error', (err) => {
-  console.error(' Unexpected error on idle connection:', err.message);
-  if (err.code === 'PROTOCOL_CONNECTION_LOST') {
-    console.error('Database connection was closed.');
+  console.error("Unexpected error on idle connection:", err.message);
+  if (err.code === "PROTOCOL_CONNECTION_LOST") {
+    console.error("Database connection was closed.");
   }
-  if (err.code === 'PROTOCOL_ENQUEUE_AFTER_FATAL_ERROR') {
-    console.error('Database had a fatal error.');
+  if (err.code === "PROTOCOL_ENQUEUE_AFTER_FATAL_ERROR") {
+    console.error("Database had a fatal error.");
   }
-  if (err.code === 'PROTOCOL_ENQUEUE_AFTER_INVOKING_ERROR') {
-    console.error('Database connection error.');
+  if (err.code === "PROTOCOL_ENQUEUE_AFTER_INVOKING_ERROR") {
+    console.error("Database connection error.");
   }
 });
 

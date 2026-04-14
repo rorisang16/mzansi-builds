@@ -12,6 +12,9 @@ export const registerSchema = Joi.object({
     "string.max": "Password must not exceed 128 characters",
     "string.pattern.base": "Password must contain at least one uppercase letter, one lowercase letter, and one number"
 }),
+ confirmPassword: Joi.string().valid(Joi.ref('password')).required().messages({
+    "any.only": "Passwords do not match"
+  }),
 }).options({ stripUnknown: true });
 
 

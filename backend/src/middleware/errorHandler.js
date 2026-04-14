@@ -2,7 +2,10 @@
 import CustomError from "../utils/customErrors.js";
 
 //express error middleware(4 parameters tells express that this handles errors)
+
 export const errorHandler = (err, req, res, next) => {
+    //logged error for debugging purposes
+    console.error(err);
 
     err.statusCode = err.statusCode || 500;
     err.status = err.status || "error"; // default to "error" if status is not set
