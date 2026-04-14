@@ -24,6 +24,12 @@ export const loginSchema = Joi.object({
 
 export const changePasswordSchema = Joi.object({
   currentPassword: Joi.string().required(),
-  newPassword: Joi.string().min(8).max(128).pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/).required(),
-  confirmPassword: Joi.string().valid(Joi.ref('newPassword')).required(),
+  newPassword: Joi.string().min(8).max(128).pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/).required().messages({
+      "string.min": "Password must be at least 8 characters",
+      "string.max": "Password must not exceed 128 characters",
+      "string.pattern.base": "Password must contain at least one uppercase letter, one lowercase letter, and one number"
+    }),
+  confirmPassword: Joi.string().valid(Joi.ref('newPassword')).required().messages({
+      "any.only": "Passwords do not match"
+    }),
 }).options({ stripUnknown: true });
