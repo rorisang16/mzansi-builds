@@ -1,5 +1,5 @@
 import request from 'supertest';
-import app from '../server.js';
+import app from '../src/app.js';
 
 describe("Auth API", () => {
   let token;

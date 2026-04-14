@@ -1,10 +1,11 @@
 //imports project schema
 import { createProjectSchema } from "./schemas/projectSchema.js";
+import { createCommentSchema } from "./schemas/commentSchema.js";
 
-
-
+// O(1) Lookup for schemas by key,which allows validate middleware to be flexible and work for different routes
 const schemas = {
     createProject: createProjectSchema,
+    createComment: createCommentSchema,
 }
 
 
