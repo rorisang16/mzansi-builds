@@ -40,7 +40,7 @@ const validate = (schemaKey) => {
     }
 
     //stores clean data for controller 
-    //does not use req.body directly in controllers to avoid unvalidated data, this ensures only validated and sanitised data is used in business logic
+    //dont use req.body directly in controllers to avoid unvalidated data, this ensures only validated and sanitised data is used in business logic
     req.validatedData = value;
     next();
   };
