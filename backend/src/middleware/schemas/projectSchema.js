@@ -15,13 +15,13 @@ export const createProjectSchema = Joi.object({ //joi.object defines what data m
       "any.required": "Description is required",
     }),
   stage: Joi.string()
-    .valid('ideation', 'development', 'testing')
+    .valid("ideation", "development", "testing")
     .required()
     .messages({
       "any.only": "Stage must be ideation, development or testing",
       "any.required": "Stage is required",
     }),
      status: Joi.string()
-    .valid('active', 'completed')
-    .default('active'),
+    .valid("active", "completed")
+    .default("active"),
 });
