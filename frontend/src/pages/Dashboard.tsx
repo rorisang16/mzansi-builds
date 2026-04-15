@@ -3,9 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { apiFetch } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Plus, MessageCircle, Rocket, Award, ArrowRight } from "lucide-react";
-
+import { Card, CardContent, CardTitle } from "@/components/ui/card";
 const stageBadge: Record<string, { cls: string; label: string }> = {
   ideation:    { cls: "bg-amber-500/15 text-amber-400 border-amber-500/20",  label: "Ideation" },
   development: { cls: "bg-primary/15 text-primary border-primary/20",         label: "Development" },
